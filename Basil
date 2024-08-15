@@ -1,0 +1,34 @@
+import RPi.GPIO as GPIO
+import time
+
+# Plant watering schedule
+plant_watering_schedule = {
+    "basil": {"watering_time": 60, "watering_interval": 24},  # Water for 60 seconds every 24 hours
+    "tomato": {"watering_time": 90, "watering_interval": 36},  # Water for 90 seconds every 36 hours
+    # Add more plants and their watering schedules here
+}
+
+# GPIO pin for water pump control
+water_pump_pin = 18
+
+def water_plant(plant_name):
+    watering_data = plant_watering_schedule[plant_name]
+    watering_time = watering_data["watering_time"]
+    watering_interval = watering_data["watering_interval"]
+
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(water_pump_pin, GPIO.OUT)
+
+    print(f"Watering {plant_name} for {watering_time} seconds")
+    GPIO.output(water_pump_pin, GPIO.HIGH)
+    time.sleep(watering_time)
+    GPIO.output(water_pump_pin, GPIO.LOW)
+
+def main():
+    while True:
+        for plant_name in plant_watering_schedule:
+            water_plant(plant_name)
+        time.sleep(3600)  # Check for plants to water every hour
+
+if __name__ == "__main__":
+    main()
